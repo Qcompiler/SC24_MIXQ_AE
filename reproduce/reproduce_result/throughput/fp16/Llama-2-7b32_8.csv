@@ -1,0 +1,2 @@
+,Batch Size,Decode Length,Decode tokens/s,Memory (VRAM),latency
+0,32,128,1369.8202526994753,12.82 GB (32.55%),0.023360729217529297
