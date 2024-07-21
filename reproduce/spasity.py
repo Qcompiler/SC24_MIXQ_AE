@@ -1,4 +1,10 @@
 import matplotlib.pyplot as plt
+import os
+try:
+    os.mkdir("reproduce_result/result/")
+    os.mkdir("reproduce_result/result/spasity")
+except:
+    pass
 
 ai = [32, 64, 128, 256, 512, 768, 1024, 1280, 1536, 2048]
 # Define the bar colors

@@ -4,6 +4,9 @@
 #     # echo "evaluate ${file}" >> eval_out
 #     srun -N 1 --pty --gres=gpu:a100:1 -p octave -A public python benchbitsand.py $i result/llama70b-up.csv LLama-2-70b up
 # done
+rm -r result/kernel_8
+rm -r result/kernel_4
+
 export PYTHONPATH=""
 kernels_8=("FP16" "EETQ" "torch_int8" "bitsandbytes" "mixq_8")
 kernels_4=("FP16" "awq" "quik_4" "cutlass" "mixq_4")

@@ -1,119 +1,169 @@
-# MixQ
-Enabling High Performance [ Int8 Int8 + fp16fp16] Mix GEMM with High Accuracy for LLama
+# AE of SC24 
 
-## 运行示例
+For AE reviewers, we have prepared a server containing all the datasets and codes. Please contact chenyidong@mails.tsinghua.edu.cn to access the server.
+
+## Hardware environments 
+
+We run all the experiment in the two nodes: (1) 8 NVIDIA Ampere A100-PCIE-40GB GPUs with 2 AMD EPYC 7742 CPUs. (2) 2 NVIDIA Hopper H100-PCIE-80 GB with 2 AMD EPYC 7453 28-Core CPUs.
+
+
+ We have provided a server for both environments. Please contact us for access to the server. Before installation and deployment, you need to log in to the server. This server has the same GPU and CPU configurations as we used in our paper.
+
+
+
+## Operating System
+
+Debian 6.1.27 or any Linux system that can support CUDA v12.1  and GCC v9.4 or above.
+
+
+## Software environment
+
+The compiler is CUDA 12.1.  The transformer version is 3.5 and the Pytorch version is 2.1.0.
+
+
+## Installation and Compilation
+
+For installation:
+
+The installation process involves three libraries:  CUDA, CMake, and Pytorch. To optimize the time, you can use the module load on the provided cluster, which takes less than 10 seconds.
+
+On our cluster, this could be done through those commands:
+
+```
+source load.sh
+```
+
+
+
+
+
+## Quantize Models. Please quantize the LLMs before inferencing and reproducing the result. We provide the script $quant.sh$ for quantizing
+
+ the mixed-precision 4-bit and 8-bit model. Running the following command to quant a LlaMA-7B model:
+
+```  
+bash   quant.sh  Llama-2-7b 
+```
+
+
+ ## Kernel performance evaluation. 
+ 
+ For evaluating the kernel performance, the reader should download the activations (120GB) from the URL provided in activation tensor.txt. After downloading the tensor from the BaiduNetDisk. 
+
+ 
+To reproduce  Fig.13 and Fig.14, the kernel performance of MixQ. The result could be reproduced by running:
 
 ``` 
-bash runthroughput.sh 0 fp16
-bash runthroughput.sh 0 bitsandbytes
-bash runthroughput.sh 0 mix4
-bash runthroughput.sh 0 mix8
-```  
-
-
-# Overview
-
-
-Please install all necessary Python packages
+ cd  MixQ/reproduce
+ bash benchkernels.sh
 ```
-python3 -m pip install -r requirements.txt
-```
+The figures will be generated in  figure/tflops_int4_overall.pdf
 
-## Compile
+  The kernel performance of MixQ should be faster than EETQ, AWQ, QUIK and Bitsandbytes   in A100 GPU. For LLama-2-70B mode, MixQ should reach about 443 TFLOPs for W8A8O16 quantizaiton and  724 TFLOPs for W4A4O16 quantizaiton.
 
-Please compile and install the MixQ by
-cloning the MixQ code to the localmachine. Make sure the nvcc version is 12.1, the gcc version is 9.4.0 or above and the Python version is 3.11. Compile the cuda kernel of MixQ by:
+
+To reproduce Fig.15, the layer performance of MixQ.     The result could be reproduced by running the following command :
+
+``` 
+bash benchlayers.sh 
 
 ```
-cd quantkernel
-python setup.py install
-```
+The figures will be generated in  figure/donw_13B.pdf
 
-Compile the thrid-party tools of MixQ by:
+   <!-- \item  reproduce Fig.16, the QAD is applied to achieve an average of $1.92\times$ performance enhancement.
 
-```
-git clone https://github.com/NetEase-FuXi/EETQ.git
-cd EETQ
-python setup.py install
-```
+The result could be reproduced by running:
 
-Quantize. Please quantizate the LLMs before inferencing and reproducing the result. We provide the script 
-```
-bash quant.sh 0
-```
-for quantizing the mixed-precision 4-bit and 8-bit model.
-
-## End-to-end throughput
-
-Please compare the perplexity of the MixQ, the FP16 and the Bitsandbytes by running the script runthroughput.sh. For evaluating the end-to-end throughput of MixQ, please run the script runthroughput.sh. To reproduce the results one by one, please run the following CMD:
-```
-bash runthroughput.sh 0
-```
-or run
-```
- CUDA_VISIBLE_DEVICES=0 python benchflops.py   --model_type {type} --model_path   {path}     --quant_file  {path}        --batch_size {batch}  --bit {bit} 
-```
-the options of  ```{type}``` are awq, bitsandbytes, fp16, quik and mix.
-
-For example, if the readers would evaluate the AWQ throughput, please pass the following parameter:
-```
---model_type awq --model_path  /dataset/Llama-2-7b-awq    --quant_file  /dataset/Llama-2-7b    --batch_size {batch}   
-```
-
-For example, if the readers would evaluate the FP16 throughput, please pass the following parameter:
-```
---model_type fp16 --model_path  /dataset/Llama-2-7b   --quant_file  /dataset/Llama-2-7b    --batch_size {batch}   
-```
-where the path /dataset/Llama-2-7b contains the original LLMs file.
-
-
-## End-to-end perplexity. 
-
-Please compare the perplexity of the MixQ, the FP16 and the Bitsandbytes by running the script runfloat.sh. For evaluating the end-to-end perplexity of MixQ. Please run the script runthroughput.sh. To reproduce the results one by one, please run the following CMD:
-
-```
-CUDA_VISIBLE_DEVICES=0 python evalppl.py   --model_type mix --model_path  {path}     --quant_file  {path}    --n_ctx batch --n_batch batch  --eval_accuracy True
- ```
-
-
+\$ bash breakdown.sh (Time cost: 1 hour ) -->
 
  
 
 
-# Compare with the baselines
 
 
-Moreover, the readers are encouraged to compile the baselines.
+## End-to-end throughput
 
 
-Please download the QUIK by:
+
+<!-- To  reproduce Fig.17,   the order-reserved structure for outliers processing is much more costly-free than  order-permuted
+% structure. The result could be reproduced by running:
+
+% \$ cd  MixQ/reproduce
+
+%  \$ bash overhead.sh (Time cost: 30 minutes ) -->
+
+
+To  reproduce Fig.18, the result could be reproduced by running:
+
+```
+ bash run_all_throughput.sh a100 
+```
+
+
+To reproduce Fig.19. The result could be reproduced by running:
+
+```
+ bash run_all_throughput.sh h100 
+```
+(Time cost: 30 minutes )
+
+
+To  reproduce Fig.20, the result could be reproduced by running:
+
+```
+  bash   run_all_latency.sh 
+```
+ (Time cost: 4 hours )
+ 
+
+
+## End-to-end Perplexity.
+
+
+
+
+To  reproduce Table IV and Table V,  the perplexity of MixQ quantization method is lower than AWQ.
+The result could be reproduced by running:
+
 ``` 
-git clone https://github.com/IST-DASLab/QUIK
-cd QUIK
-python setup.py install
+bash run_all_ppl.sh
 ```
+ 
 
 
-Please download the Bitsandbytes by:
-```
-git clone https://github.com/TimDettmers/bitsandbytes.git \&\& cd bitsandbytes/
-pip install -r requirements-dev.txt
-cmake -DCOMPUTE\_BACKEND=cuda -S .
-make
-pip install .
-python setup.py install
-```
 
-Please change the dir to AutoAWQ and run the following CMD:
+<!-- # Locality and Sparsity of outliers.
+
+
+
+
+To reproduce Fig.21 and Fig.22 ,  the locality and sparsity of outlier channels of different models. The result could be reproduced by running:
+
+ \$ bash run\_all\_locality.sh  (Time cost: 4 hours )
+
+ \end{itemize} -->
+
+
+
+# Plotting
+
+time: 10 minutes
+
+The results that were used to create the figures in the submissions can be found in the reproduce/figure directory. 
+Both Python scripts expect to be run from inside the plots directory.
+
+To generate all the figures, please run
 
 ```
-cd AutoAWQ
-python setup.py install
-```
+ bash plot_all.sh 
+  ```
+ 
+And we can get all the figures in the folder reproduce_result/figure.
 
-Please change the dir to SmoothQuant kernel and run the following CMD:
 
-```
-cd torch-int
-python setup.py install
-```
+ 
+
+ 
+
+
+

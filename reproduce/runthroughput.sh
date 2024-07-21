@@ -10,6 +10,11 @@ if [ $2 == h100 ]
     CMD="srun  -p twills -A h100 --gres=gpu:h100:1 --export=ALL python"
 fi
 
+if [ $2 == h1002 ]
+    then
+    CMD="srun  -p twills -A h100 --gres=gpu:h100:2 --export=ALL python"
+fi
+# fp16 = [324.7421773966231, 600.0817201560811, 1019.1094069141465, 1508.5728672586265, 1650.8977361964487]
 set -x
 
 quantpath=/home/dataset/quant/
@@ -19,7 +24,7 @@ dataset_path=/home/dataset/quant/checkpoint/dataset
 model_type=$3
 data_type=$4
 
-for batch in     32
+for batch in    512 256 128  64 32
 #for batch in  1  
 
     do
