@@ -29,8 +29,7 @@ for batch in    512
                  
                    
                     echo ${model}          
-                    CUDA_VISIBLE_DEVICES=$1   http_proxy=127.0.0.1:7890 https_proxy=127.0.0.1:7890  \
-                    ${CMD} evalppl.py --fp_features_num 128 --model_type ${data_type} --model_path  \
+                    CUDA_VISIBLE_DEVICES=$1   ${CMD} evalppl.py --fp_features_num 128 --model_type ${data_type} --model_path  \
                     ${modelpath}/${model} \
                     --quant_file ${modelpath}/${model} \
                     --n_ctx $batch --n_batch $batch  --eval_accuracy True --dataset_path ${dataset_path} 
@@ -44,8 +43,7 @@ for batch in    512
                  
                    
                     echo ${model}          
-                    CUDA_VISIBLE_DEVICES=$1   http_proxy=127.0.0.1:7890 https_proxy=127.0.0.1:7890  \
-                    ${CMD} evalppl.py --fp_features_num 128 --model_type ${data_type} --model_path  \
+                    CUDA_VISIBLE_DEVICES=$1  ${CMD} evalppl.py --fp_features_num 128 --model_type ${data_type} --model_path  \
                     ${modelpath}/${model} \
                     --quant_file ${modelpath}/${model} \
                     --n_ctx $batch --n_batch $batch  --eval_accuracy True --dataset_path ${dataset_path} 

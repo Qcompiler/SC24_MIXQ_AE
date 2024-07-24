@@ -2,7 +2,7 @@
 
 if [ $2 == a100 ]
     then
-    CMD=" srun  -N 1 --pty --gres=gpu:a100:1  -A h100 -p a100 public python "
+    CMD=" srun  -N 1 --pty --gres=gpu:a100:1  -A h100 -p a100   python "
 fi
 
 if [ $2 == h100 ]
@@ -19,7 +19,7 @@ dataset_path=/home/dataset/quant/checkpoint/dataset
 model_type=$3
 data_type=$4
 
-for batch in     32
+for batch in     32 64 128 256 512
 #for batch in  1  
 
     do
@@ -37,7 +37,7 @@ for batch in     32
                 
                     model=${model_type}
                     echo ${model}   
-                    rm -r ${quantpath}${bit}/${model}/model.safetensors     
+                    rm -r ${quantpath}/quant${bit}/${model}/model.safetensors     
                     CUDA_VISIBLE_DEVICES=$1    ${CMD}  benchlatency.py  --model_type ${data_type} --model_path  \
                     ${quantpath}/quant${bit}/${model} \
                     --quant_file ${quantpath}/quant${bit}/${model} \
@@ -52,7 +52,7 @@ for batch in     32
                  
                     model=${model_type}
                     echo ${model}   
-                    rm -r ${quantpath}${bit}/${model}/model.safetensors     
+                    rm -r ${quantpath}/quant${bit}/${model}/model.safetensors     
                     CUDA_VISIBLE_DEVICES=$1    ${CMD}  benchlatency.py  --model_type ${data_type} --model_path  \
                     ${quantpath}/quant${bit}/${model} \
                     --quant_file ${quantpath}/quant${bit}/${model} \

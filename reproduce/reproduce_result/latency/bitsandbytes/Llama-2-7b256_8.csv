@@ -1,0 +1,2 @@
+,Batch Size,Decode Length,latency,Memory (VRAM)
+0,256,128,0.1842747926712036,7.13 GB (18.10%)

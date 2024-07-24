@@ -25,7 +25,7 @@ def unpack_int8_to_int4(weight,ind):
 
 class MixLinear_GEMM(nn.Module):
     def __init__(self, in_features, out_features, bias, dev,  bit, 
-            weight_only = False, cache = None, fp_features_num = 256, name = None):
+            weight_only = False, cache = None, fp_features_num = 128, name = None):
         super().__init__()
         
  
@@ -88,7 +88,7 @@ class MixLinear_GEMM(nn.Module):
 
     @classmethod
     def from_linear(cls, linear, bit, weight_only=False, init_only=False,cache=None, 
-                    layer_scales= None, dev = 'cuda', name = None, fp_features_num = 256):
+                    layer_scales= None, dev = 'cuda', name = None, fp_features_num = 128):
 
 
         quant_linear = cls(linear.in_features, linear.out_features, linear.bias is not None, 
@@ -222,7 +222,7 @@ class MixLinear_GEMM(nn.Module):
                 
                 
             self.cnt += 1
-            if self.cnt >= self.cache.stop or self.ind.shape[0] > 256:
+            if self.cnt >= self.cache.stop or self.ind.shape[0] > 128:
                 self.add_outliers = False
              
 

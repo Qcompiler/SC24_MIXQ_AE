@@ -1,22 +1,28 @@
 
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "7"
-os.environ["WORLD_SIZE"] = "1"
+import sys
+sys.path.append('/home/chenyidong/AutoAWQ')
 from awq import AutoAWQForCausalLM
 from transformers import AutoTokenizer
 
-# model_path = '/mnt/data/zhongrx/Llama-2-13b-hf'
-# quant_path = '/mnt/data/chenyd/Llama-2-13b-awq'
-
-
-model_path = '/mnt/data/huangkz/huggingface/hub/models--facebook--opt-30b/snapshots/ceea0a90ac0f6fae7c2c34bcb40477438c152546'
-quant_path = '/mnt/data/chenyd/models--facebook--opt-30b-awq'
-
+ 
 quant_config = { "zero_point": True, "q_group_size": 128, "w_bit": 4, "version": "GEMM" }
+
+
+import argparse
+parser = argparse.ArgumentParser(description="Calculate Perplexity for a model.")
+parser.add_argument("--model_path", type=str,   help="Model path")
+parser.add_argument("--quant_file", type=str,   help="quant_file Model path")
+parser.add_argument("--w_bit", type=int, default=8,  help="weight bit")
+args = parser.parse_args()
+
+model_path = args.model_path
+quant_path = args.quant_file
+
 print(quant_path)
 # Load model
 # NOTE: pass safetensors=True to load safetensors
-model = AutoAWQForCausalLM.from_pretrained(model_path, **{"low_cpu_mem_usage": True})
+model = AutoAWQForCausalLM.from_pretrained(model_path,   **{"low_cpu_mem_usage": True},device_map='cpu')
 tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
 
 # Quantize

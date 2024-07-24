@@ -41,7 +41,7 @@ class BaseForCausalLM(nn.Module):
     @torch.no_grad()
     def quantize_mix(self, tokenizer=None, quant_config={},
                        calib_data: Union[str, List[str]]="pileval", 
-                       split="train", text_column="text"):
+                       split="train", text_column="text", weight_only_map_str = None):
         self.quant_config = quant_config
         quant_config["version"] = "MIX"
         quant_config["q_group_size"] = 128
@@ -49,9 +49,11 @@ class BaseForCausalLM(nn.Module):
 
         quantizer = MixQuantizer(
             self, self.model, tokenizer, quant_config["w_bit"], quant_config["q_group_size"],
-            quant_config["version"])
+            quant_config["version"], weight_only_map_str = weight_only_map_str)
         quantizer.quantize()
         self.is_quantized = True
+
+
 
 
     @torch.no_grad()
@@ -298,9 +300,12 @@ class BaseForCausalLM(nn.Module):
                         break
                 bit =  self.quant_config['w_bit']
 
+                fp_features_num = 128
                 if MixGemmcache.eval_ppl == True:
+                    fp_features_num = 256
                     if "down" in name:
                         weight_only = True
+                        
 
 
                 if bit == 4:
@@ -313,14 +318,14 @@ class BaseForCausalLM(nn.Module):
 
                 name_ = str(i) + name
 
-                
+
                 if weight_only is True:
 
                     q_linear =  MixLinear_GEMM.from_linear(module,
                                             bit =  bit,
                                             weight_only = weight_only, 
                                             init_only = True,
-                                            cache = MixGemmcache, name = name_)
+                                            cache = MixGemmcache, name = name_, fp_features_num = fp_features_num)
                     
 
 
@@ -329,7 +334,7 @@ class BaseForCausalLM(nn.Module):
                                             bit =  bit,
                                             weight_only = weight_only, 
                                             init_only = True,
-                                            cache = MixGemmcache, name = name_)
+                                            cache = MixGemmcache, name = name_, fp_features_num = fp_features_num)
 
  
                 q_linear.to(next(layer.parameters()).device)

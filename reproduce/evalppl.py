@@ -244,10 +244,10 @@ if __name__ == "__main__":
 
     data = pd.DataFrame(allppl)
     try:
-        os.mkdir("output")
+        os.mkdir("reproduce_result/ppl")
     except:
         pass
-    data.to_csv("output/ppl_batchsize"+str(args.n_ctx)+"_"+args.model_type+"_"+model_path.split('/')[-1]+".csv" + str(args.fp_features_num))
+    data.to_csv("reproduce_result/ppl/ppl_"+args.model_type+"_"+model_path.split('/')[-1]+".csv")
 
     
 

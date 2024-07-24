@@ -57,6 +57,7 @@ To reproduce  Fig.13 and Fig.14, the kernel performance of MixQ. The result coul
  cd  MixQ/reproduce
  bash benchkernels.sh
 ```
+
 The figures will be generated in  figure/tflops_int4_overall.pdf
 
   The kernel performance of MixQ should be faster than EETQ, AWQ, QUIK and Bitsandbytes   in A100 GPU. For LLama-2-70B mode, MixQ should reach about 443 TFLOPs for W8A8O16 quantizaiton and  724 TFLOPs for W4A4O16 quantizaiton.
@@ -66,8 +67,8 @@ To reproduce Fig.15, the layer performance of MixQ.     The result could be repr
 
 ``` 
 bash benchlayers.sh 
-
 ```
+
 The figures will be generated in  figure/donw_13B.pdf
 
    <!-- \item  reproduce Fig.16, the QAD is applied to achieve an average of $1.92\times$ performance enhancement.
@@ -111,7 +112,7 @@ To reproduce Fig.19. The result could be reproduced by running:
 To  reproduce Fig.20, the result could be reproduced by running:
 
 ```
-  bash   run_all_latency.sh 
+bash run_all_latency.sh  a100 
 ```
  (Time cost: 4 hours )
  

@@ -36,7 +36,7 @@ def get_act_scales(model, tokenizer, dataset_path, num_samples=512, seq_len=512)
                 m.register_forward_hook(functools.partial(stat_input_hook, name=name))
             )
 
-    dataset = load_dataset("json", data_files=dataset_path, split="train")
+    dataset = load_dataset("json", data_files="/home/chenyidong/val.jsonl.zst", split="train")
     dataset = dataset.shuffle(seed=42)
 
     for i in tqdm(range(num_samples)):
