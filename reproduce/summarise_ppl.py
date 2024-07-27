@@ -18,4 +18,6 @@ for type in types:
         f = a.readlines()
         f = float(f[-1].split(",")[-1])
         out[type][model] = f
-        print(out)
+        
+print("The perplexity is summarised as follows")
+print(out)

@@ -12,6 +12,19 @@ plt.rcParams.update({'font.size': 12})
 # Create a figure and set its size
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 3), dpi=800)
 
+paths="reproduce_result/throughputa100/"
+
+
+def read(model_, q_type, bit = 8):
+    datas = []
+    for bs in [32, 64 , 128, 256, 512]:
+        path = paths + q_type + "/" + model_ + str(bs) + "_" + str(bit) + ".csv"
+        print(path)
+        a = open(path)
+        data = float(a.readlines()[-1].split(",")[-1]) * 1000
+        datas.append(data)
+    return datas
+
 # llama-7b
 ai = ['32', '64', '128', '256', '512']
 bnb = [142.65122264623642, 141.70000702142715, 141.91774278879166, 147.552952170372, 161.74716502428055]
@@ -20,6 +33,20 @@ mixq8 = [21.204158663749695, 21.685630083084106, 26.923902332782745, 29.14535254
 mixq4 = [25.466181337833405, 25.455959141254425, 25.772616267204285, 28.453469276428223, 44.490471482276917]
 awq = [13.806268572807312, 22.203445434570312, 39.96925801038742, 75.26524364948273, 145.86584270000458]
 quik = [34.13808345794678, 37.72461414337158, 35.460710525512695, 36.52536869049072, 57.08885192871094]
+
+
+
+try:
+    model ="Llama-2-7b"
+    fp16 = read(model, "fp16")
+    mixq8 = read(model, "mix8")
+    mixq4 = read(model, "mix4", 4 )
+    awq = read(model, "awq")
+    bnb = read(model, "bitsandbytes")
+
+except:
+    pass
+
 tolerate = [100, 100, 100, 100, 100]
 # bi = ['0','32', '64', '128', '256', '512','1024']
 
@@ -40,6 +67,16 @@ mixq8_13 = [28.723537921905518, 31.038537621498108, 35.39577126502991, 46.916693
 awq_13 = [24.39606934785843, 40.25109112262726, 73.28598946332932, 139.71683382987976, 271.97592705488205]
 quik_13 = [43.000221252441406, 42.47903823852539, 42.62816905975342, 53.888797760009766, 86.6461992263794]
 
+try:
+    model ="Llama-2-13b"
+    fp16_13 = read(model, "fp16")
+    mixq8_13 = read(model, "mix8")
+    mixq4_13 = read(model, "mix4", 4 )
+    #awq_13 = read(model, "awq")
+    bnb_13 = read(model, "bitsandbytes")
+    quik_13 = read(model, "quik", 4 )
+except:
+    print("warning : no data! please re run!")
 ax2.plot(ai, fp16_13, marker='s', color=bar_colors_default[4], linewidth=2.5,markersize=4)
 ax2.plot(ai, bnb_13, marker='^', color=bar_colors_default[1], linewidth=2.5,markersize=4)
 ax2.plot(ai, tolerate, color='red', linewidth=2.5,markersize=4, linestyle='dashed')

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-rm -r result/spasity
-touch result/spasity
+rm -r reproduce_result/result/spasity
+touch reproduce_result/result/spasity
 export PYTHONPATH=""
 set -ex
 srun -N 1 --pty --gres=gpu:a100:1 -p octave -A public python benchsparsity.py 0 result/spasity LLama-2-13b down mixq_8 2048

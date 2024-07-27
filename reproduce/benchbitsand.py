@@ -4,7 +4,7 @@ sys.path.append('/home/chenyidong/anaconda3/envs/h100/lib/python3.11/site-packag
 
 token = 0
 layer = 0
-outfile_path = ''
+outfile_path = 'reproduce_result/'
 args = sys.argv
 if len(args) == 7:
     layer = int(args[1])
@@ -26,6 +26,7 @@ else:
     print("     We support batch size up to 512 and 2048 two mode, you can just input 512 or 2048 in the command/")
     exit(1)
 
+
 if kernel != "fp8":
     from bitsandbytes.nn.modules import Linear8bitLt
     import bitsandbytes as bnb
@@ -36,8 +37,10 @@ else:
 if batch_size == '512':
     test_batch_pool = [32, 64, 128, 256, 512]
 elif batch_size == '2048':
-    test_batch_pool = [32, 64, 128, 256, 512, 768, 1024, 1280, 1536, 2048]
+    test_batch_pool = [64, 128, 256, 512, 768, 1024, 1280, 1536, 2048, 4096]
 # file = "%d,%d,self_attn.q_proj"%(token,layer)
+if kernel == "awq":
+    projection = "up"
 if projection == "up":
     file = "%d,%d,mlp.up_proj"%(token,layer)
 elif projection == "down":
@@ -51,7 +54,10 @@ if model == "LLama-2-13b":
 elif model == "LLama-2-7b":
     activation = torch.load('/home/dataset/activation_tensor_llama-2-7b/'+file,map_location=torch.device('cpu'))
 else:
-    activation = torch.load('/home/dataset/'+model+'/'+file,map_location=torch.device('cpu'))
+    if "down" in file:
+        activation = torch.zeros((512,28672),dtype=torch.float16)
+    else:
+        activation = torch.load('/home/dataset/'+model+'/'+file,map_location=torch.device('cpu'))
 
 activation = torch.vstack((activation,activation))
 activation = torch.vstack((activation,activation))
@@ -68,7 +74,7 @@ if projection == "down":
     dic = {
         "LLama-2-13b": (8192, 13824),
         "LLama-2-7b": (4096, 11008),
-        "LLama-2-70b": (4096, 8192)
+        "LLama-2-70b": (8192, 28672)
     }
 else:
     dic = {
@@ -93,8 +99,8 @@ if kernel == 'FP16':
             weight = torch.rand(N, K, dtype=torch.float16).cuda()
             x = torch.rand(M, K, dtype=torch.float16).cuda()
             elapsed_time_ms = 0
-            iterations = 100
-            for _ in range(10):
+            iterations = 200
+            for _ in range(100):
                 y = F.linear(x, weight)
 
             for _ in range(iterations):
@@ -136,8 +142,8 @@ elif kernel == 'EETQ':
             qweight = int8_weight.to(weight.device)
             weight_scales = scales.half().to(weight.device)
             elapsed_time_ms = 0
-            iterations = 100
-            for _ in range(10):
+            iterations = 200
+            for _ in range(100):
                 y = w8_a16_gemm(x, qweight, weight_scales)
             torch.cuda.synchronize()
             for _ in range(iterations):
@@ -180,8 +186,8 @@ elif kernel == 'torch_int8':
             linear.weight.data = weight.float()
             linear.bias.data = bias.float()
             elapsed_time_ms = 0
-            iterations = 100
-            for _ in range(10):
+            iterations = 200
+            for _ in range(100):
                 act = x.to(torch.int8)
                 y = linear_a8_w8_b32_o32(act, weight, bias)
             torch.cuda.synchronize()
@@ -230,10 +236,10 @@ elif kernel == 'cublas':
                                                   cache=MixGemmcache,
                                                   name="name")
             elapsed_time_ms = 0
-            iterations = 100
+            iterations = 200
             xi8 = q_linear.q_weight
             act = x.to(torch.int8)
-            for i in range(10):
+            for i in range(100):
                 mixlib.gemm(act, xi8, M, N, K)
             torch.cuda.synchronize()
             for _ in range(iterations):
@@ -280,8 +286,8 @@ elif kernel == 'bitsandbytes':
                 has_fp16_weights=False).to(torch.float16)
             linear_custom = linear_custom.cuda()
             elapsed_time_ms = 0
-            iterations = 100
-            for _ in range(10):
+            iterations = 200
+            for _ in range(100):
                 y = linear_custom(x)
             torch.cuda.synchronize()
             for _ in range(iterations):
@@ -381,8 +387,8 @@ elif kernel == 'quik_4':
                                                fp_indices=fp_indices,
                                                bits=4).cuda()
             elapsed_time_ms = 0
-            iterations = 100
-            for _ in range(10):
+            iterations = 200
+            for _ in range(100):
                 y = int4_mod(x)
             torch.cuda.synchronize()
             for _ in range(iterations):
@@ -428,8 +434,8 @@ elif kernel == 'cutlass':
             qint_x = quik.symmetric.quantize(x, qscale_x, 4)
             y = quik.matmul.int4Matmul(qint_x, int_weight)
             elapsed_time_ms = 0
-            iterations = 100
-            for _ in range(10):
+            iterations = 200
+            for _ in range(100):
                 quik.matmul.int4Matmul(qint_x, int_weight)
             torch.cuda.synchronize()
             for _ in range(iterations):
@@ -475,10 +481,10 @@ elif kernel == 'mixq_8':
                                                   cache=MixGemmcache,
                                                   name="name")
             elapsed_time_ms = 0
-            iterations = 100
+            iterations = 200
             MixGemmcache.q_xcache = mixlib.FindRowScale(
                 x, MixGemmcache.x_scale, M, in_features, 8)
-            for i in range(10):
+            for i in range(100):
                 q_linear(x, cache=MixGemmcache, bench_gemm=True)
             torch.cuda.synchronize()
             for _ in range(iterations):
@@ -516,6 +522,7 @@ elif kernel == 'mixq_4':
     for out_features, in_features in [dic[model]]:
         if arch == 9:
             break
+        
 
         @torch.no_grad()
         def test_quant_linear_Mixq_gemm(M, N, K):
@@ -533,11 +540,11 @@ elif kernel == 'mixq_4':
                 layer_scales=layer_scales,
                 name="name")
             elapsed_time_ms = 0
-            iterations = 100
+            iterations = 200
             MixGemmcache.q_xcache = mixlib.FindRowScale(
                 x, MixGemmcache.x_scale, M, in_features, 4)
             q_linear.outliers = x[:, q_linear.fp_indices]
-            for i in range(10):
+            for i in range(100):
                 q_linear(x)
             torch.cuda.synchronize()
             for _ in range(iterations):
@@ -565,6 +572,7 @@ elif kernel == 'mixq_4':
             print(tflops, end=",", file=outfile)
         print("\n")
         print("\n", file=outfile)
+        
 elif kernel == 'quik_8':
     # QUIK int8
     sys.path.append('/home/drc/mixq/QUIK/experiments')
@@ -590,8 +598,8 @@ elif kernel == 'quik_8':
                                                fp_indices=fp_indices,
                                                bits=8).cuda()
             elapsed_time_ms = 0
-            iterations = 100
-            for _ in range(10):
+            iterations = 200
+            for _ in range(100):
                 y = int8_mod(x)
             torch.cuda.synchronize()
             for _ in range(iterations):
@@ -676,7 +684,7 @@ elif kernel == 'fp8':
             x = activation[0:M].cuda()
 
             elapsed_time_ms = 0
-            iterations = 100
+            iterations = 200
             layer = torch.nn.Linear(K, N, device='cuda')
 
             input_scale = None
@@ -693,7 +701,7 @@ elif kernel == 'fp8':
             fp8layer.weight = qweight.t()
             fp8layer.input_scale = input_scale
 
-            for _ in range(50):
+            for _ in range(100):
                 y = apply(fp8layer, x)
             torch.cuda.synchronize()
             for _ in range(iterations):

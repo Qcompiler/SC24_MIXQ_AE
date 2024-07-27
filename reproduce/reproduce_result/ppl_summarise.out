@@ -1,0 +1,6 @@
+The perplexity is summarised as follows
+{'bitsandbytes': {'Llama-2-7b': 5.815234975405565}, 'awq': {'Llama-2-7b': 5.944115133536359}, 'mix8': {'Llama-2-7b': 5.793296272506944}, 'mix4': {'Llama-2-7b': 6.109035179196506}, 'fp16': {'Llama-2-7b': 5.778021504998948}}
+The perplexity is summarised as follows
+{'bitsandbytes': {'Llama-2-7b': 5.815234975405565}, 'awq': {'Llama-2-7b': 5.944115133536359}, 'mix8': {'Llama-2-7b': 5.793296272506944}, 'mix4': {'Llama-2-7b': 6.109035179196506}, 'fp16': {'Llama-2-7b': 5.778021504998948}}
+The perplexity is summarised as follows
+{'bitsandbytes': {'Llama-2-7b': 5.815234975405565}, 'awq': {'Llama-2-7b': 5.944115133536359}, 'mix8': {'Llama-2-7b': 5.793296272506944}, 'mix4': {'Llama-2-7b': 6.109035179196506}, 'fp16': {'Llama-2-7b': 5.778021504998948}}

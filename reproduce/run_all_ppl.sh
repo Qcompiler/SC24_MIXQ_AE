@@ -1,4 +1,5 @@
 models=(   "Llama-2-7b"   "Llama-2-13b"  ) 
+rm -r reproduce_result/ppl_summarise.out
 for model in "${models[@]}"
 do
     if [ $1 == a100 ]

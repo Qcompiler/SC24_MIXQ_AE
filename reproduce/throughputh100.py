@@ -24,6 +24,27 @@ fp8 = [454.5084377,923.3477591,1719.662241,2880.001614,3657.796975]
 fp16 = [324.7421773966231, 600.0817201560811, 1019.1094069141465, 1508.5728672586265,2158.689404699797]
 mixq8 = [522.7656492518856, 1033.4854969238233, 1649.8317105063006, 2896.415630378135, 3157.999170605311]
 
+paths="reproduce_result/throughputh100/"
+
+
+def read(model_, q_type, bit = 8):
+    datas = []
+    for bs in [32, 64 , 128, 256, 512]:
+        path = paths + q_type + "/" + model_ + str(bs) + "_" + str(bit) + ".csv"
+        print(path)
+        a = open(path)
+        data = float(a.readlines()[-1].split(",")[3])
+        datas.append(data)
+    return datas
+
+try:
+    model ="Llama-2-hf"
+    fp16 = read(model, "fp16")
+    mixq8 = read(model, "mix8")
+
+except:
+    pass
+
 width = 0.2  # the width of the bars
 x = np.arange(len(labels))
 rects3 = ax1.bar(x - width, fp16, width, label='FP16', color = bar_colors_default[3])

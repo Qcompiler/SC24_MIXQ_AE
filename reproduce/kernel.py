@@ -71,7 +71,7 @@ plt.rcParams.update({'font.size': 12})
 fig1, (ax1, ax3, ax5) = plt.subplots(1, 3, figsize=(10, 3), dpi=800)
 fig2, (ax2, ax4, ax6) = plt.subplots(1, 3, figsize=(10, 3), dpi=800)
 
-with open('result/kernel_8', 'r') as f:
+with open('reproduce_result/result/kernel_8', 'r') as f:
     lines = f.readlines()
     data = []
     for line in lines:
@@ -102,7 +102,7 @@ with open('result/kernel_8', 'r') as f:
     except Exception as e:
         print("continue with prepared data!")
 
-with open('result/kernel_4', 'r') as f:
+with open('reproduce_result/result/kernel_4', 'r') as f:
     lines = f.readlines()
     data = []
     for line in lines:
