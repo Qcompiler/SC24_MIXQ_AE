@@ -54,13 +54,16 @@ for batch in    512
 
             if [ ${data_type} == awq ]
                 then 
-       
+                    pip install transformers==4.35
+
                     echo ${model}
                     CUDA_VISIBLE_DEVICES=$1     \
                     ${CMD} evalppl.py --model_type ${data_type} --model_path  \
                     ${quantpath}/awqquant/${model} \
                     --quant_file ${quantpath}/awqquant/${model} \
                     --n_ctx $batch --n_batch $batch  --dataset_path ${dataset_path} --eval_accuracy True
+
+                    pip install transformers==4.41.2
            
             fi
 

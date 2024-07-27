@@ -301,10 +301,7 @@ class BaseForCausalLM(nn.Module):
                 bit =  self.quant_config['w_bit']
 
                 fp_features_num = 128
-                if MixGemmcache.eval_ppl == True:
-                    fp_features_num = 256
-                    if "down" in name:
-                        weight_only = True
+
                         
 
 
@@ -314,11 +311,15 @@ class BaseForCausalLM(nn.Module):
                             bit = 8
                             weight_only = False 
 
-
+                if MixGemmcache.eval_ppl == True:
+                    if "down" in name:
+                        weight_only = True
 
                 name_ = str(i) + name
 
-
+                # print(name_)
+                # print(weight_only)
+                # print('----')
                 if weight_only is True:
 
                     q_linear =  MixLinear_GEMM.from_linear(module,
