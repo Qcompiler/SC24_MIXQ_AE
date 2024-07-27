@@ -54,7 +54,7 @@ bash   quant.sh  Llama-2-7b
 To reproduce  Fig.13 and Fig.14, the kernel performance of MixQ. The result could be reproduced by running:
 
 ``` 
- cd  MixQ/reproduce
+ cd  SC24_MIXQ_AE/reproduce
  bash benchkernels.sh
 ```
 
@@ -128,9 +128,10 @@ The result could be reproduced by running:
 
 ``` 
 bash run_all_ppl.sh
+python summarise_ppl.py >> reproduce_result/ppl_summarise.out
 ```
  
-
+The summarise of the PPL is generated in   reproduce_result/ppl_summarise.out
 
 
 <!-- # Locality and Sparsity of outliers.
