@@ -7,6 +7,8 @@
 rm -r result/kernel_8
 rm -r result/kernel_4
 
+touch result/kernel_4
+touch result/kernel_8
 export PYTHONPATH=""
 kernels_8=("FP16" "EETQ" "torch_int8" "bitsandbytes" "mixq_8")
 kernels_4=("FP16" "awq" "quik_4" "cutlass" "mixq_4")

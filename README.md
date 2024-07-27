@@ -39,7 +39,7 @@ source load.sh
 
 ## Quantize Models. Please quantize the LLMs before inferencing and reproducing the result. We provide the script $quant.sh$ for quantizing
 
- the mixed-precision 4-bit and 8-bit model. Running the following command to quant a LlaMA-7B model:
+ the mixed-precision 4-bit and 8-bit model. Running the following command to quant a LlaMA-7B model (We have already did it for you in our server):
 
 ```  
 bash   quant.sh  Llama-2-7b 
