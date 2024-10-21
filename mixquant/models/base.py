@@ -311,9 +311,9 @@ class BaseForCausalLM(nn.Module):
                             bit = 8
                             weight_only = False 
 
-                if MixGemmcache.eval_ppl == True:
-                    if "down" in name:
-                        weight_only = True
+                # if MixGemmcache.eval_ppl == True:
+                #     if "down" in name:
+                #         weight_only = True
 
                 name_ = str(i) + name
 

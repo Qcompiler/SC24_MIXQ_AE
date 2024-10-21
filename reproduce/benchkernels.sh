@@ -9,6 +9,8 @@ set -x
 rm -r reproduce_result/result/kernel_8
 rm -r reproduce_result/result/kernel_4
 mkdir figure
+touch reproduce_result/result/kernel_8
+touch reproduce_result/result/kernel_4
 
 export PYTHONPATH=""
 kernels_8=("FP16" "EETQ" "torch_int8" "bitsandbytes" "mixq_8")

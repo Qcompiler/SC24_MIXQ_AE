@@ -10,13 +10,13 @@ fi
 
 set -x
 
-quantpath=/home/dataset/quant/
+quantpath=/home/dataset/quant
 modelpath=/home/dataset
 dataset_path=/home/dataset/quant/checkpoint/dataset
 
 model=$3
 data_type=$4
-
+down_weight_only=0
 
 for batch in    512 
     do
@@ -72,14 +72,25 @@ for batch in    512
                     bit=8
                     echo  "---------run mix 8--------"
      
-                        echo ${model}          
+                        echo ${model}    
+                    if [ ${down_weight_only} == 1 ]
+                        then      
                         rm -r ${quantpath}/quant${bit}/down_weight_only/${model}/model.safetensors     
                         CUDA_VISIBLE_DEVICES=$1    \
                         ${CMD} evalppl.py  --model_type ${data_type} --model_path  \
                         ${quantpath}/quant${bit}/down_weight_only/${model} \
                         --quant_file ${quantpath}/quant${bit}/down_weight_only/${model} \
                         --n_ctx ${batch}  --n_batch $batch  --dataset_path ${dataset_path} --eval_accuracy True
-   
+                    fi
+                    if [ ${down_weight_only} == 0 ]
+                            then      
+                        rm -r ${quantpath}/quant${bit}/${model}/model.safetensors     
+                        CUDA_VISIBLE_DEVICES=$1    \
+                        ${CMD} evalppl.py  --model_type ${data_type} --model_path  \
+                        ${quantpath}/quant${bit}/${model} \
+                        --quant_file ${quantpath}/quant${bit}/${model} \
+                        --n_ctx ${batch}  --n_batch $batch  --dataset_path ${dataset_path} --eval_accuracy True
+                    fi
             
             fi
             if [ ${data_type} == mix4 ]

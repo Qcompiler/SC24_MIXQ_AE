@@ -31,29 +31,29 @@ modelpath=/home/dataset
  
  
 
-for bit in  4  8
-  do 
-    for model in "${models[@]}"
-            do
-            echo ${model}
-            nohup ${CMD} \
-              examples/basic_quant_mix.py  \
-            --model_path ${modelpath}/${model} \
-            --quant_file ${quantpath}${bit}/down_weight_only/${model} --w_bit ${bit}  --weight_only_map "down"  &
-    done
-done
- 
 # for bit in  4  8
 #   do 
 #     for model in "${models[@]}"
 #             do
 #             echo ${model}
-#             ${CMD} \
+#             nohup ${CMD} \
 #               examples/basic_quant_mix.py  \
 #             --model_path ${modelpath}/${model} \
-#             --quant_file ${quantpath}${bit}/${model} --w_bit ${bit}
+#             --quant_file ${quantpath}${bit}/down_weight_only/${model} --w_bit ${bit}  --weight_only_map "down"  &
 #     done
 # done
+ 
+for bit in     8
+  do 
+    for model in "${models[@]}"
+            do
+            echo ${model}
+            ${CMD} \
+              examples/basic_quant_mix.py  \
+            --model_path ${modelpath}/${model} \
+            --quant_file ${quantpath}${bit}/${model} --w_bit ${bit}
+    done
+done
 
 # for bit in 4 
 #   do 

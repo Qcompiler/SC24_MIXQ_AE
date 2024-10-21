@@ -204,6 +204,7 @@ if __name__ == "__main__":
 
 
     if args.model_type == 'mix4' or args.model_type == 'mix8' :
+        sys.path.append("/home/chenyidong/sc_24_ae/SC24_MIXQ_AE")
         from mixquant.Cache import MixLibCache
         from mixquant import AutoForCausalLM
 

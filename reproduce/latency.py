@@ -1,5 +1,6 @@
 # latency
 import matplotlib.pyplot as plt
+plt.rcParams['pdf.fonttype'] = 42
 import numpy as np
 from matplotlib.ticker import LogLocator, LogFormatter
 
@@ -45,6 +46,7 @@ try:
     bnb = read(model, "bitsandbytes")
 
 except:
+    print("use prepared data")
     pass
 
 tolerate = [100, 100, 100, 100, 100]

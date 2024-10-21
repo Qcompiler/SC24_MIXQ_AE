@@ -263,3 +263,19 @@ do not have the file  /home/dataset/quant/quant8/down_weight_only/Llama-2-13b/py
 Mix quant: 100%|██████████| 40/40 [05:58<00:00,  5.18s/it]Mix quant: 100%|██████████| 40/40 [05:58<00:00,  8.97s/it]
 Mix Model is quantized and saved at "/home/dataset/quant/quant8/down_weight_only/Llama-2-13b"
 Mix Model is quantized and saved at "/home/dataset/quant/quant4/down_weight_only/Llama-2-13b"
+srun: Requested partition configuration not available now
+srun: job 172183 queued and waiting for resources
+srun: Requested partition configuration not available now
+srun: job 172184 queued and waiting for resources
+srun: Requested partition configuration not available now
+srun: job 172185 queued and waiting for resources
+srun: Requested partition configuration not available now
+srun: job 172186 queued and waiting for resources
+srun: Job has been cancelled
+srun: Job has been cancelled
+srun: Job has been cancelled
+srun: Job has been cancelled
+srun: error: Unable to allocate resources: Job/step already completing or completed
+srun: error: Unable to allocate resources: Job/step already completing or completed
+srun: error: Unable to allocate resources: Job/step already completing or completed
+srun: error: Unable to allocate resources: Job/step already completing or completed

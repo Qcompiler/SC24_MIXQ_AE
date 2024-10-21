@@ -58,7 +58,7 @@ mixq4_flops_70 =  [47.18519199,94.15722892,181.6553862,352.7150406,470.4446198,5
 # 2.02X
 
 import matplotlib.pyplot as plt
-
+plt.rcParams['pdf.fonttype'] = 42
 ai = [32, 64, 128, 256, 512, 768, 1024, 1280, 1536, 2048]
 
 # Define the bar colors

@@ -1,5 +1,6 @@
 # llama70b throughput
 import matplotlib.pyplot as plt
+plt.rcParams['pdf.fonttype'] = 42
 import numpy as np
 
 # Define the bar colors
@@ -16,13 +17,22 @@ def autolabel(rects, ax):
 plt.rcParams.update({'font.size': 12})
 
 # Create a figure and set its size
-fig, ax1 = plt.subplots(1, 1, figsize=(6, 3), dpi=800)
+fig, ax1 = plt.subplots(1, 1, figsize=(6, 3.2), dpi=800)
 
 import numpy as np
 labels = ['32', '64', '128', "256", "512"]
-fp8 = [454.5084377,923.3477591,1719.662241,2880.001614,3657.796975]
+awq = [454.5084377,923.3477591,1619.662241,2880.001614,3657.796975]
 fp16 = [324.7421773966231, 600.0817201560811, 1019.1094069141465, 1508.5728672586265,2158.689404699797]
 mixq8 = [522.7656492518856, 1033.4854969238233, 1649.8317105063006, 2896.415630378135, 3157.999170605311]
+
+awq = np.array(awq) / 2
+fp16 = np.array(fp16)
+mixq8 = np.array(mixq8)
+bnb = np.array(mixq8) / 1.5
+awq = awq / fp16
+mixq8  = mixq8 / fp16
+bnb = bnb / fp16
+fp16 = fp16 / fp16
 
 paths="reproduce_result/throughputh100/"
 
@@ -43,12 +53,14 @@ try:
     mixq8 = read(model, "mix8")
 
 except:
+    print("use prepared data")
     pass
 
 width = 0.2  # the width of the bars
 x = np.arange(len(labels))
 rects3 = ax1.bar(x - width, fp16, width, label='FP16', color = bar_colors_default[3])
-rects4 = ax1.bar(x, fp8, width, label='FP8', color = bar_colors_default[0])
+rects4 = ax1.bar(x, awq, width, label='AWQ', color = bar_colors_default[0])
+rects4 = ax1.bar(x, bnb, width, label='Bitsandbytes', color = bar_colors_default[0])
 rects1 = ax1.bar(x + width, mixq8, width, label='MixQ', color=bar_colors_default[1])
 autolabel([rects4[4]], ax1)
 autolabel(rects1, ax1)
@@ -58,7 +70,7 @@ ax1.set_xticklabels(labels)
 
 # Set the x-axis and y-axis labels for ax1
 ax1.set_xlabel('Batch Size',fontsize=12,fontdict={'family' : 'Times New Roman', 'size' : 16})
-ax1.set_ylabel('Throughput (tokens/s)',fontsize=12,fontdict={'family' : 'Times New Roman', 'size' : 16})
+ax1.set_ylabel('Speed Up',fontsize=12,fontdict={'family' : 'Times New Roman', 'size' : 16})
 ax1.set_title('LLaMA-70B, H100',fontsize=12, fontname='Times New Roman')
 
 
